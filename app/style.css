@@ -24,12 +24,112 @@ main {
 	background-color: #4a494a;
 }
 .up {
-	background-color:rgba(0,0,0,0);
+	background-color:rgba(0,0,0,1);
 	height:50%;
 	width: 100%;
 }
 .down {
-	background-color:rgba(0,255,0,0.3);
+	background-color:rgba(0,0,0,0);
 	height:50%;
 	width: 100%;
+}
+.marker {
+	width: 100%;
+	padding-top: 100%;
+}
+#d1 .marker {
+	background-color: #8c0000;
+}
+#d2 .marker {
+	background-color: #bd0000;
+}
+#d3 .marker {
+	background-color: #e70000;
+}
+#d4 .marker {
+	background-color: #ff0000;
+}
+#d5 .marker {
+	background-color: #ff0000;
+}
+#d6 .marker {
+	background-color: #ff0000;
+}
+#d7 .marker {
+	background-color: #ff2000;
+}
+#d8 .marker {
+	background-color: #ff5d00;
+}
+#d9 .marker {
+	background-color: #ff9a00;
+}
+#d10 .marker {
+	background-color: #ffd700;
+}
+#d11 .marker {
+	background-color: #f7ff00;
+}
+#d12 .marker {
+	background-color: #c6ff00;
+}
+#d13 .marker {
+	background-color: #94ff00;
+}
+#d14 .marker {
+	background-color: #6bff00;
+}
+#d15 .marker {
+	background-color: #42ff00;
+}
+#d16 .marker {
+	background-color: #10ff00;
+}
+#d17 .marker {
+	background-color: #00ff31;
+}
+#d18 .marker {
+	background-color: #00ffbd;
+}
+#d19 .marker {
+	background-color: #00e7ff;
+}
+#d20 .marker {
+	background-color: #00baff;
+}
+#d21 .marker {
+	background-color: #008aff;
+}
+#d22 .marker {
+	background-color: #005dff;
+}
+#d23 .marker {
+	background-color: #0034ff;
+}
+#d24 .marker {
+	background-color: #0008ff;
+}
+#d25 .marker {
+	background-color: #1000ff;
+}
+#d26 .marker {
+	background-color: #3100ff;
+}
+#d27 .marker {
+	background-color: #5200ff;
+}
+#d28 .marker {
+	background-color: #6b00bd;
+}
+#d29 .marker {
+	background-color: #6b00bd;
+}
+#d30 .marker {
+	background-color: #6b00a5;
+}
+#d31 .marker {
+	background-color: #6b0084;
+}
+#d32 .marker {
+	background-color: #5a006b;
 }
