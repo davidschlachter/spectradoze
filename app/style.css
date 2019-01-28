@@ -1,0 +1,22 @@
+body {
+	background-color: #000;
+	color: #fff;
+	font-family: 'Roboto', sans-serif;
+}
+head {
+	background-color: #211c21;
+}
+main {
+	background-color: #000;
+}
+.d {
+	width: 3.125%;
+	height: 80vh;
+	float:left;
+}
+#drawable > div:nth-of-type(odd) {
+	background-color: #636563;
+}
+#drawable > div:nth-of-type(even) {
+	background-color: #4a494a;
+}
