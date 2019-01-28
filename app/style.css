@@ -9,9 +9,12 @@ head {
 main {
 	background-color: #000;
 }
+#drawable {
+	height: 80vh;
+}
 .d {
 	width: 3.125%;
-	height: 80vh;
+	height: 100%;
 	float:left;
 }
 #drawable > div:nth-of-type(odd) {
@@ -19,4 +22,14 @@ main {
 }
 #drawable > div:nth-of-type(even) {
 	background-color: #4a494a;
+}
+.up {
+	background-color:rgba(0,0,0,0);
+	height:50%;
+	width: 100%;
+}
+.down {
+	background-color:rgba(0,255,0,0.3);
+	height:50%;
+	width: 100%;
 }
