@@ -21,10 +21,8 @@ function startup() {
     var positions = getPositions();
 
     element.onmousedown = function(event) {
-        element.addEventListener('onmousemove', setHeight);
         element.onmousemove = setHeight;
     };
-
     element.onmouseup = function() {
         document.removeEventListener('onmousemove', setHeight);
         spectrum = getSpectrumData();
@@ -32,11 +30,28 @@ function startup() {
         element.onmousemove = null;
     };
     
+    // Touch listeners
+    var supportsPassive = false;
+    try {var opts = Object.defineProperty({}, 'passive', {get: function() {supportsPassive = true;}});
+      window.addEventListener("testPassive", null, opts);
+      window.removeEventListener("testPassive", null, opts);
+    } catch (e) {}
+    element.addEventListener('touchdown', function(event) {
+        if (window.audioCtx !== null) audioCtx.close();
+    }, supportsPassive ? { passive: true } : false);
+    element.addEventListener('touchmove', function(event) {
+        setHeight(event);
+        //event.preventDefault();
+    }, supportsPassive ? { passive: true } : false);
+
+
     function setHeight(event) {
+        let e = event;
+        if (event && event.pageX) {e = event;} else {e = event.touches[0]}
         for (var i = 0; i < positions.length; i++) {
-            if (event.pageX >= positions[i][4] && event.pageX <= positions[i][2]) {
+            if (e.pageX >= positions[i][4] && e.pageX <= positions[i][2]) {
                 var frequencyBand = document.getElementById(positions[i][0]);
-                var ypercent = (event.pageY-positions[i][1])/(positions[i][3] - positions[i][1]) * 100;
+                var ypercent = (e.pageY-positions[i][1])/(positions[i][3] - positions[i][1]) * 100;
                 if (ypercent >= 100) ypercent = 100;
                 if (ypercent <= 0) ypercent = 0;
                 var upper = document.querySelector("#"+frequencyBand.id+" > .up");
@@ -110,7 +125,7 @@ if (AudioContext) {
 }
 
 function playAudio() {
-    if (window.audioCtx) audioCtx.close();
+    if (window.audioCtx !== null) audioCtx.close();
     window.audioCtx = new AudioContext;
     
     let edgefreqs = calculateEdgeFreqs(bandcount, minfreq, maxfreq);
