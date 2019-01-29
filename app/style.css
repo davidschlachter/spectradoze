@@ -15,38 +15,46 @@
      along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+html, body {
+	height: 100%;
+}
 body {
-	background-color: #000;
+	background-color: #211c21;
 	color: #fff;
 	font-family: 'Roboto', sans-serif;
+	padding: 0;
+	margin: 0;
 }
-head {
-	background-color: #211c21;
-    clear: both;
+header {
+	max-height: 9vh;
+	padding: 3vh;
 }
-h1 {
-    float: left;
+#banner {
+	fill: white;
+	font-family: 'Roboto', sans-serif;
+	width: 68%;
+	max-height: 9vh;
 }
 .control {
-    float: right;
-    display: block;
-    font-size: 2em;
-    font-weight: bold;
-
-}
-.control > div {
-    margin-top: 0.67em;
-    margin-bottom: 0.67em;
-    padding-left: 0.34em;
-    padding-right: 0.34em;
-    display:inline-block;
+	fill: white;
+	font-size: 6px;
+	font-family: 'Roboto', sans-serif;
+	width: 12%;
+	max-height: 9vh;
+	float:right;
 }
 main {
 	background-color: #000;
+	position: absolute;
+	bottom: 0;
+	height: 85vh;
+	width: 100%;
 }
 #drawable {
-	height: 80vh;
-    clear:both;
+	height: 85vh;
+	background-color: #000;
+	clear:both;
+	width: 100%;
 }
 .d {
 	width: 3.125%;

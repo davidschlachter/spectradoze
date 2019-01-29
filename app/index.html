@@ -25,7 +25,19 @@
 		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   </head>
   <body>
-		<header><h1>Spectra Doze</h1><div class=control><div id=play>▶</div><div id=stop>▢</div></div></header>
+		<header>
+            <!-- Have a h1 for SEO, don't show since it doesn't resize well -->
+            <h1 style="display:none">Spectra Doze</h1>
+            <svg id=banner viewBox="0 0 94 19" preserveAspectRatio="xMidYMid meet">
+                <text text-anchor=start id=title x=0 y=15>Spectra Doze</text>
+            </svg>
+            <svg id=stop class=control viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet">
+                <text id=title x=4 y=8>▢</text>
+            </svg>
+            <svg id=play class=control viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet">
+                <text id=title x=2 y=8>▶</text>
+            </svg>
+        </header>
 		<main>
 			<div id=drawable>
 				<div id=d1 class=d><div class=up></div><div class=down><div class=marker></div></div></div>
@@ -61,7 +73,7 @@
 				<div id=d31 class=d><div class=up></div><div class=down><div class=marker></div></div></div>
 				<div id=d32 class=d><div class=up></div><div class=down><div class=marker></div></div></div>
 			</div>
-		</main>
+        </main>
 		<script src=spectradoze.js></script>
   </body>
 </html>
