@@ -142,11 +142,11 @@ function playAudio() {
         equalizers[i] = audioCtx.createBiquadFilter();
         equalizers[i].type = "peaking"; // https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode/type
         equalizers[i].frequency.value = edgefreqs[i];
-        low = spectrum[i];
+        low = edgefreqs[i];
         if (i == bandcount - 1) {
             high = maxfreq;
         } else {
-            high = spectrum[i+1]
+            high = edgefreqs[i+1]
         }
         mid = ((high - low)/2) + low;
         equalizers[i].Q.value = mid / (high - low);
