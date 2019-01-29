@@ -21,7 +21,7 @@ html, body {
 body {
 	background-color: #211c21;
 	color: #fff;
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Roboto', 'Helvetica', sans-serif;
 	padding: 0;
 	margin: 0;
 }
@@ -31,14 +31,14 @@ header {
 }
 #banner {
 	fill: white;
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Roboto', 'Helvetica', sans-serif;
 	width: 68%;
 	max-height: 9vh;
 }
 .control {
 	fill: white;
 	font-size: 6px;
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Roboto', 'Helvetica', sans-serif;
 	width: 12%;
 	max-height: 9vh;
 	float:right;
