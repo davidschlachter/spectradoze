@@ -177,3 +177,10 @@ main {
 #d32 .marker {
 	background-color: #5a006b;
 }
+.unsel {
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+}
