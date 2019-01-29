@@ -27,6 +27,7 @@ function startup() {
         document.removeEventListener('onmousemove', setHeight);
         spectrum = getSpectrumData();
         playAudio();
+        savePositions();
         element.onmousemove = null;
     };
     function addEvent(obj,evt,fn) {
@@ -84,6 +85,7 @@ function startup() {
         if (window.audioCtx) audioCtx.close();
     });
 
+    setSavedPositions();
 }
 
 window.onload = startup;
@@ -102,6 +104,45 @@ function getPositions() {
     }
     
     return positions;
+}
+
+function getPositionsForSave() {
+    let positions = new Array();
+
+    var element = document.getElementById("drawable");
+    var children = element.children;
+    for (var i = 0; i < children.length; i++) {
+        var singleChild = children[i];
+        var a = singleChild.getBoundingClientRect();
+        var c = document.querySelector('#' + singleChild.id + ' > .down');
+        var d = c.getBoundingClientRect();
+        var b = Math.round(((d.bottom - d.top) / (a.bottom - a.top))*1000)/1000;
+        positions.push(b);
+    }
+
+    return positions;
+}
+
+function savePositions() {
+    localStorage.setItem('savedPositions', JSON.stringify(getPositionsForSave()));
+}
+function loadPositions() {
+    let retrievedObject = localStorage.getItem('savedPositions');
+    if (retrievedObject === null) return null;
+    return JSON.parse(retrievedObject);
+}
+function setSavedPositions() {
+    let y = loadPositions();
+    if (y === null) return;
+    for (var i = 0; i < y.length; i++) {
+        var ypercent = y[i]*100;
+        if (ypercent >= 100) ypercent = 100;
+        if (ypercent <= 0) ypercent = 0;
+        var upper = document.querySelector("#d"+(i+1)+" > .up");
+        upper.setAttribute("style","height:"+(100.0-ypercent)+"%");
+        var lower = document.querySelector("#d"+(i+1)+" > .down");
+        lower.setAttribute("style","height:"+(ypercent)+"%");
+    }
 }
 
 
