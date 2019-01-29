@@ -37,6 +37,8 @@ function startup() {
             if (event.pageX >= positions[i][4] && event.pageX <= positions[i][2]) {
                 var frequencyBand = document.getElementById(positions[i][0]);
                 var ypercent = (event.pageY-positions[i][1])/(positions[i][3] - positions[i][1]) * 100;
+                if (ypercent >= 100) ypercent = 100;
+                if (ypercent <= 0) ypercent = 0;
                 var upper = document.querySelector("#"+frequencyBand.id+" > .up");
                 upper.setAttribute("style","height:"+ypercent+"%");
                 var lower = document.querySelector("#"+frequencyBand.id+" > .down");
@@ -45,6 +47,10 @@ function startup() {
             }
         }
     }
+    document.getElementById("play").addEventListener("click", playAudio);
+    document.getElementById("stop").addEventListener("click", function() {
+        if (window.audioCtx) audioCtx.close();
+    });
 
 }
 
@@ -90,7 +96,7 @@ function getSpectrumData() {
 		// Scaled to 0 to 1023
 		// spectrum[i] = 0.001 * Math.pow(1000, spectrum[i]) * 1023;
         // Scaled between -24 and 24 (dB)
-        spectrum[i] = ((spectrum[i] * 2) - 1 ) * 24;
+        spectrum[i] = ((spectrum[i] * 2) - 1 ) * 8;
 	}
 	return spectrum;
 }

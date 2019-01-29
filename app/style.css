@@ -22,12 +22,31 @@ body {
 }
 head {
 	background-color: #211c21;
+    clear: both;
+}
+h1 {
+    float: left;
+}
+.control {
+    float: right;
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+
+}
+.control > div {
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    padding-left: 0.34em;
+    padding-right: 0.34em;
+    display:inline-block;
 }
 main {
 	background-color: #000;
 }
 #drawable {
 	height: 80vh;
+    clear:both;
 }
 .d {
 	width: 3.125%;
