@@ -22,8 +22,8 @@ window.setHeightDelta[0] = 0;
 window.setHeightDelta[1] = 0;
 
 // Initialize error tolerance (px) for drawing
-let tolerance = 0.0;
-let positions = getPositions();
+var tolerance = 0.0;
+var positions = getPositions();
 
 if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
     addEvent(window, "resize", resizeForIOS);
@@ -34,7 +34,7 @@ if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
     });
 }
 
-let drawable = document.getElementById("drawable");
+var drawable = document.getElementById("drawable");
 
 
 // Set up Web Audio API
@@ -65,7 +65,7 @@ function startup() {
     // If the cursor exits the window, stop drawing and turn off audio
     addEvent(document, "mouseout", function (e) {
         e = e ? e : window.event;
-        let from = e.relatedTarget || e.toElement;
+        var from = e.relatedTarget || e.toElement;
         if (!from || from.nodeName == "HTML") {
             removeEvent(drawable, "mousemove", setHeight);
             if (drawable.onmousemove !== null && window.audioCtx !== null) audioCtx.close();
@@ -84,30 +84,25 @@ function startup() {
     //
     // Touch listeners
     //
-    let supportsPassive = false;
-    try {let opts = Object.defineProperty({}, 'passive', {get: function() {supportsPassive = true;}});
-      window.addEventListener("testPassive", null, opts);
-      window.removeEventListener("testPassive", null, opts);
-    } catch (e) {}
-    drawable.addEventListener('touchdown', function(event) {
+    addEvent(drawable, "touchstart", function (e) {
         if (window.audioCtx !== null) audioCtx.close();
-    }, supportsPassive ? { passive: true } : false);
-    drawable.addEventListener('touchmove', function(event) {
-        setHeight(event);
-    }, supportsPassive ? { passive: true } : false);
-    drawable.addEventListener('touchend', function(event) {
+        e.preventDefault();
+    });
+    addEvent(drawable, "touchmove", function (e) {
+        setHeight(e);
+        e.preventDefault();
+    });
+    addEvent(drawable, "touchend", function (e) {
         spectrum = getSpectrumData();
         playAudio();
         savePositions();
-    }, supportsPassive ? { passive: true } : false);
+        e.preventDefault();
+    });
 
     //
     // Support iOS touch events, resize app to accomodate mobile Safari address bar
     //
     if (/iP(hone|ad)/.test(window.navigator.userAgent)) {
-        addEvent(document.body, "touchstart", function() {
-            if (window.audioCtx !== null) audioCtx.close();
-        });
         resizeForIOS();
     }
     
@@ -126,36 +121,36 @@ function startup() {
 //
 // Generate and equalize audio based on the bar heights
 //
-const minfreq = 100.0;
-const maxfreq = 20000.0;
-const bandcount = 32;
+var minfreq = 100.0;
+var maxfreq = 20000.0;
+var bandcount = 32;
 
 function playAudio() {
     if (window.audioCtx !== null) audioCtx.close();
     window.audioCtx = new AudioContext;
     
-    let edgefreqs = calculateEdgeFreqs(bandcount, minfreq, maxfreq);
-    let spectrum = getSpectrumData();
+    var edgefreqs = calculateEdgeFreqs(bandcount, minfreq, maxfreq);
+    var spectrum = getSpectrumData();
 
-    const noiseLength = 30; // seconds
-    const bufferSize = audioCtx.sampleRate * noiseLength; // Chromadoze uses 8192 and 65536 samples, see SampleGeneratorState
-    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    var noiseLength = 30; // seconds
+    var bufferSize = audioCtx.sampleRate * noiseLength; // Chromadoze uses 8192 and 65536 samples, see SampleGeneratorState
+    var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     
-    let data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < bufferSize; i++) {
         data[i] = Math.random() * 2 - 1;
     }
 
-    let noise = audioCtx.createBufferSource();
+    var noise = audioCtx.createBufferSource();
     noise.loop = true;
     noise.buffer = buffer;
     noise.start();
 
-    let equalizers = new Array();
-    let low = 0; // The low, mid, and high frequencies in a given band
-    let high= 0;
-    let mid = 0;
-    for (let i = 0; i < bandcount; i++) { // Create 32 equalizers according to the calculated band frequencies
+    var equalizers = new Array();
+    var low = 0; // The low, mid, and high frequencies in a given band
+    var high= 0;
+    var mid = 0;
+    for (var i = 0; i < bandcount; i++) { // Create 32 equalizers according to the calculated band frequencies
         equalizers[i] = audioCtx.createBiquadFilter();
         equalizers[i].type = "peaking"; // https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode/type
         equalizers[i].frequency.value = edgefreqs[i];
@@ -178,21 +173,21 @@ function playAudio() {
 }
 
 function calculateEdgeFreqs(bandcount, minfreq, maxfreq) {
-    let edgefreqs = new Array();
-    let range = maxfreq / minfreq;
-    for (let i = 0; i < bandcount; i++) {
+    var edgefreqs = new Array();
+    var range = maxfreq / minfreq;
+    for (var i = 0; i < bandcount; i++) {
         edgefreqs[i] = (minfreq * Math.pow(range, i / bandcount));
     }
     return edgefreqs;
 };
 
 function getSpectrumData() {
-	let edgefreqs = calculateEdgeFreqs(bandcount, minfreq, maxfreq);
-	let spectrum = new Array();
-	let maxheight = document.querySelector("#drawable").clientHeight;
+	var edgefreqs = calculateEdgeFreqs(bandcount, minfreq, maxfreq);
+	var spectrum = new Array();
+	var maxheight = document.querySelector("#drawable").clientHeight;
 	// Value of each bar ranges from 0 to 1
-	for (let i = 0; i < bandcount; i++) {
-		let itemheight = document.querySelector("#d"+(i+1)+" > .down").clientHeight;
+	for (var i = 0; i < bandcount; i++) {
+		var itemheight = document.querySelector("#d"+(i+1)+" > .down").clientHeight;
 		spectrum[i] = (itemheight / maxheight);
         // Scaled between -8 and 8 (dB)
         spectrum[i] = ((spectrum[i] * 2) - 1 ) * 8;
@@ -205,7 +200,7 @@ function getSpectrumData() {
 // Sets height of bars as user drags across drawable
 //
 function setHeight(event) {
-    let e = event;
+    var e = event;
     if (event && event.pageX) {e = event;} else {e = event.touches[0]}
     
     if (window.setHeightDelta[0] == 0 && window.setHeightDelta[1] == 0) {
@@ -213,8 +208,8 @@ function setHeight(event) {
         window.setHeightDelta[1] = e.pageY;
     }
 
-    let xdiff = Math.abs(e.pageX - window.setHeightDelta[0]);
-    let ydiff = Math.abs(e.pageY - window.setHeightDelta[1]); 
+    var xdiff = Math.abs(e.pageX - window.setHeightDelta[0]);
+    var ydiff = Math.abs(e.pageY - window.setHeightDelta[1]); 
     
     if (xdiff > tolerance || ydiff > tolerance) {
         window.setHeightDelta[0] = e.pageX;
@@ -223,15 +218,15 @@ function setHeight(event) {
         return;
     }
     
-    for (let i = 0; i < positions.length; i++) {
+    for (var i = 0; i < positions.length; i++) {
         if (e.pageX >= positions[i][4] && e.pageX <= positions[i][2]) {
-            let frequencyBand = document.getElementById(positions[i][0]);
-            let ypercent = (e.pageY-positions[i][1])/(positions[i][3] - positions[i][1]) * 100;
+            var frequencyBand = document.getElementById(positions[i][0]);
+            var ypercent = (e.pageY-positions[i][1])/(positions[i][3] - positions[i][1]) * 100;
             if (ypercent >= 100) ypercent = 100;
             if (ypercent <= 0) ypercent = 0;
-            let upper = document.querySelector("#"+frequencyBand.id+" > .up");
+            var upper = document.querySelector("#"+frequencyBand.id+" > .up");
             upper.setAttribute("style","height:"+ypercent+"%");
-            let lower = document.querySelector("#"+frequencyBand.id+" > .down");
+            var lower = document.querySelector("#"+frequencyBand.id+" > .down");
             lower.setAttribute("style","height:"+(100.0-ypercent)+"%");
             break;
         }
@@ -243,14 +238,14 @@ function setHeight(event) {
 // to detect which column the mouse/drag is on
 //
 function getPositions() {
-    let positions = new Array();
+    var positions = new Array();
 
-    let drawable = document.getElementById("drawable");
-    let children = drawable.children;
-    for (let i = 0; i < children.length; i++) {
-     let singleChild = children[i];
-     let a = singleChild.getBoundingClientRect();
-     let b = new Array(singleChild.id, a.top, a.right, a.bottom, a.left);
+    var drawable = document.getElementById("drawable");
+    var children = drawable.children;
+    for (var i = 0; i < children.length; i++) {
+     var singleChild = children[i];
+     var a = singleChild.getBoundingClientRect();
+     var b = new Array(singleChild.id, a.top, a.right, a.bottom, a.left);
      positions.push(b);
     }
     
@@ -261,10 +256,10 @@ function getPositions() {
 // Adjust dimensions to accomodate mobile Safari address bar
 //
 function resizeForIOS() {
-    let height = document.documentElement.clientHeight;
-    let outheight = window.screen.height;
-    let eightyfive = 0.85 * height;
-    let nine = 0.09 * height;
+    var height = document.documentElement.clientHeight;
+    var outheight = window.screen.height;
+    var eightyfive = 0.85 * height;
+    var nine = 0.09 * height;
     document.querySelector("main").setAttribute("style","height:"+eightyfive+"px");
     document.querySelector("#drawable").setAttribute("style","height:"+eightyfive+"px");
     document.querySelector("header").setAttribute("style","max-height:"+nine+"px");
@@ -281,34 +276,34 @@ function savePositions() {
     localStorage.setItem('savedPositions', JSON.stringify(getPositionsForSave()));
 };
 function getPositionsForSave() {
-    let positions = new Array();
-    let drawable = document.getElementById("drawable");
-    let children = drawable.children;
-    for (let i = 0; i < children.length; i++) {
-        let singleChild = children[i];
-        let a = singleChild.getBoundingClientRect();
-        let c = document.querySelector('#' + singleChild.id + ' > .down');
-        let d = c.getBoundingClientRect();
-        let b = Math.round(((d.bottom - d.top) / (a.bottom - a.top))*1000)/1000;
+    var positions = new Array();
+    var drawable = document.getElementById("drawable");
+    var children = drawable.children;
+    for (var i = 0; i < children.length; i++) {
+        var singleChild = children[i];
+        var a = singleChild.getBoundingClientRect();
+        var c = document.querySelector('#' + singleChild.id + ' > .down');
+        var d = c.getBoundingClientRect();
+        var b = Math.round(((d.bottom - d.top) / (a.bottom - a.top))*1000)/1000;
         positions.push(b);
     }
     return positions;
 };
 function loadPositions() {
-    let retrievedObject = localStorage.getItem('savedPositions');
+    var retrievedObject = localStorage.getItem('savedPositions');
     if (retrievedObject === null) return null;
     return JSON.parse(retrievedObject);
 };
 function setSavedPositions() {
-    let y = loadPositions();
+    var y = loadPositions();
     if (y === null) return;
-    for (let i = 0; i < y.length; i++) {
-        let ypercent = y[i]*100;
+    for (var i = 0; i < y.length; i++) {
+        var ypercent = y[i]*100;
         if (ypercent >= 100) ypercent = 100;
         if (ypercent <= 0) ypercent = 0;
-        let upper = document.querySelector("#d"+(i+1)+" > .up");
+        var upper = document.querySelector("#d"+(i+1)+" > .up");
         upper.setAttribute("style","height:"+(100.0-ypercent)+"%");
-        let lower = document.querySelector("#d"+(i+1)+" > .down");
+        var lower = document.querySelector("#d"+(i+1)+" > .down");
         lower.setAttribute("style","height:"+(ypercent)+"%");
     }
 };
@@ -317,4 +312,4 @@ function setSavedPositions() {
 // addEvent: written by Dean Edwards, 2005
 // with input from Tino Zijdel - crisp@xs4all.nl
 // http://dean.edwards.name/weblog/2005/10/add-event/
-function addEvent(element,type,handler){if(element.addEventListener)element.addEventListener(type,handler,false);else{if(!handler.$$guid)handler.$$guid=addEvent.guid++;if(!element.events)element.events={};let handlers=element.events[type];if(!handlers){handlers=element.events[type]={};if(element["on"+type])handlers[0]=element["on"+type];element["on"+type]=handleEvent}handlers[handler.$$guid]=handler}}addEvent.guid=1;function removeEvent(element,type,handler){if(element.removeEventListener)element.removeEventListener(type,handler,false);else if(element.events&&element.events[type]&&handler.$$guid)delete element.events[type][handler.$$guid]}function handleEvent(event){event=event||fixEvent(window.event);let returnValue=true;let handlers=this.events[event.type];for(let i in handlers){if(!Object.prototype[i]){this.$$handler=handlers[i];if(this.$$handler(event)===false)returnValue=false}}if(this.$$handler)this.$$handler=null;return returnValue}function fixEvent(event){event.preventDefault=fixEvent.preventDefault;event.stopPropagation=fixEvent.stopPropagation;return event}fixEvent.preventDefault=function(){this.returnValue=false};fixEvent.stopPropagation=function(){this.cancelBubble=true};if(!window.addEventListener){document.onreadystatechange=function(){if(window.onload&&window.onload!=handleEvent){addEvent(window,"load",window.onload);window.onload=handleEvent}}}
+function addEvent(element,type,handler){if(element.addEventListener)element.addEventListener(type,handler,false);else{if(!handler.$$guid)handler.$$guid=addEvent.guid++;if(!element.events)element.events={};var handlers=element.events[type];if(!handlers){handlers=element.events[type]={};if(element["on"+type])handlers[0]=element["on"+type];element["on"+type]=handleEvent}handlers[handler.$$guid]=handler}}addEvent.guid=1;function removeEvent(element,type,handler){if(element.removeEventListener)element.removeEventListener(type,handler,false);else if(element.events&&element.events[type]&&handler.$$guid)delete element.events[type][handler.$$guid]}function handleEvent(event){event=event||fixEvent(window.event);var returnValue=true;var handlers=this.events[event.type];for(var i in handlers){if(!Object.prototype[i]){this.$$handler=handlers[i];if(this.$$handler(event)===false)returnValue=false}}if(this.$$handler)this.$$handler=null;return returnValue}function fixEvent(event){event.preventDefault=fixEvent.preventDefault;event.stopPropagation=fixEvent.stopPropagation;return event}fixEvent.preventDefault=function(){this.returnValue=false};fixEvent.stopPropagation=function(){this.cancelBubble=true};if(!window.addEventListener){document.onreadystatechange=function(){if(window.onload&&window.onload!=handleEvent){addEvent(window,"load",window.onload);window.onload=handleEvent}}}
