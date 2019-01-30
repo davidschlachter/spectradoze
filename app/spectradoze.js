@@ -16,12 +16,27 @@
 
 window.onload = startup; // Set up event handlers
 
+// Store the last coordinates used in chart painting
+window.setHeightDelta = new Array();
+window.setHeightDelta[0] = 0;
+window.setHeightDelta[1] = 0;
+
+// Initialize error tolerance (px) for drawing
+let tolerance = 0.0;
+let positions = getPositions();
+
 if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
     addEvent(window, "resize", resizeForIOS);
+} else {
+    addEvent(window, "resize", function(e) {
+        positions = getPositions();
+        tolerance = Math.abs(positions[0][4] - positions[0][2]) / 4;
+        console.log("New tolerance: ", tolerance);
+    });
 }
 
 let drawable = document.getElementById("drawable");
-let positions = getPositions();
+
 
 // Set up Web Audio API
 var AudioContext = window.AudioContext || window.webkitAudioContext || false; 
@@ -96,6 +111,11 @@ function startup() {
         });
         resizeForIOS();
     }
+    
+    //
+    // Set the tolerance for DOM updates
+    //
+    tolerance = Math.abs(positions[0][4] - positions[0][2]) / 4;
     
     //
     // Load last curve from Web Storage
@@ -188,6 +208,22 @@ function getSpectrumData() {
 function setHeight(event) {
     let e = event;
     if (event && event.pageX) {e = event;} else {e = event.touches[0]}
+    
+    if (window.setHeightDelta[0] == 0 && window.setHeightDelta[1] == 0) {
+        window.setHeightDelta[0] = e.pageX;
+        window.setHeightDelta[1] = e.pageY;
+    }
+
+    let xdiff = Math.abs(e.pageX - window.setHeightDelta[0]);
+    let ydiff = Math.abs(e.pageY - window.setHeightDelta[1]); 
+    
+    if (xdiff > tolerance || ydiff > tolerance) {
+        window.setHeightDelta[0] = e.pageX;
+        window.setHeightDelta[1] = e.pageY;
+    } else {
+        return;
+    }
+    
     for (let i = 0; i < positions.length; i++) {
         if (e.pageX >= positions[i][4] && e.pageX <= positions[i][2]) {
             let frequencyBand = document.getElementById(positions[i][0]);
