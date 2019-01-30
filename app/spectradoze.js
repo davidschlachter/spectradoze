@@ -91,12 +91,31 @@ function startup() {
     window.onload = function() {
       if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
         document.body.addEventListener('touchstart', function() {}, false);
+        resizeForIOS()
       }
     };
+    if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
+        window.onresize = resizeForIOS();
+    }
 }
 
 window.onload = startup;
 window.onresize = startup;
+window.onresize = resizeForIOS;
+
+function resizeForIOS() {
+    var height = document.documentElement.clientHeight;
+    var outheight = window.screen.height;
+    let eightyfive = 0.85 * height;
+    let nine = 0.09 * height;
+    document.querySelector("main").setAttribute("style","height:"+eightyfive+"px");
+    document.querySelector("#drawable").setAttribute("style","height:"+eightyfive+"px");
+    document.querySelector("header").setAttribute("style","max-height:"+nine+"px");
+    document.querySelector("#banner").setAttribute("style","max-height:"+nine+"px");
+    document.querySelector("#play").setAttribute("style","max-height:"+nine+"px");
+    document.querySelector("#stop").setAttribute("style","max-height:"+nine+"px");
+    document.querySelector("#info").setAttribute("style","max-height:"+nine+"px");
+};
 
 function getPositions() {
     var positions = new Array();
