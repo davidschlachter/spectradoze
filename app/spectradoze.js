@@ -60,7 +60,7 @@ function startup() {
         removeEvent(drawable, "mousemove", setHeight);
         spectrum = getSpectrumData();
         playAudio();
-        savePositions();
+        
     });
     // If the cursor exits the window, stop drawing and turn off audio
     addEvent(document, "mouseout", function (e) {
@@ -68,13 +68,10 @@ function startup() {
         var from = e.relatedTarget || e.toElement;
         if (!from || from.nodeName == "HTML") {
             removeEvent(drawable, "mousemove", setHeight);
-            if (drawable.onmousemove !== null && window.audioCtx !== null) audioCtx.close();
             spectrum = getSpectrumData();
         }
     });
-    addEvent(document.getElementById("play"), "click", playAudio);
     addEvent(document.getElementById("play"), "click", function() {
-        savePositions();
         playAudio();
     });
     addEvent(document.getElementById("stop"), "click", function() {
@@ -86,6 +83,7 @@ function startup() {
     //
     addEvent(drawable, "touchstart", function (e) {
         if (window.audioCtx !== null) audioCtx.close();
+        positions = getPositions();
         e.preventDefault();
     });
     addEvent(drawable, "touchmove", function (e) {
@@ -95,7 +93,6 @@ function startup() {
     addEvent(drawable, "touchend", function (e) {
         spectrum = getSpectrumData();
         playAudio();
-        savePositions();
         e.preventDefault();
     });
 
@@ -126,6 +123,8 @@ var maxfreq = 20000.0;
 var bandcount = 32;
 
 function playAudio() {
+    savePositions();
+    
     if (window.audioCtx !== null) audioCtx.close();
     window.audioCtx = new AudioContext;
     
