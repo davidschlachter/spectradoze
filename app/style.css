@@ -17,6 +17,9 @@
 
 html, body {
 	height: 100%;
+    width: 100%;
+    position: fixed;
+    overflow: hidden;
 }
 body {
 	background-color: #211c21;
@@ -183,4 +186,10 @@ main {
 	-khtml-user-select: none;
 	-webkit-user-select: none;
 	-o-user-select: none;
+}
+/*iOS WebKit doesn't seem to scale the headers right... */
+@supports (-webkit-overflow-scrolling: touch) {
+    header {max-height: 12vh;}
+    main {height: 82vh;}
+    #drawable {height: 82vh;}
 }
