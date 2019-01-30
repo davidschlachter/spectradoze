@@ -54,7 +54,7 @@ function startup() {
         let from = e.relatedTarget || e.toElement;
         if (!from || from.nodeName == "HTML") {
             removeEvent(drawable, "mousemove", setHeight);
-            if (drawable.onmousemove === null && window.audioCtx !== null) audioCtx.close();
+            if (drawable.onmousemove !== null && window.audioCtx !== null) audioCtx.close();
             spectrum = getSpectrumData();
         }
     });
