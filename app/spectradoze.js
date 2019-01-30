@@ -31,7 +31,6 @@ if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
     addEvent(window, "resize", function(e) {
         positions = getPositions();
         tolerance = Math.abs(positions[0][4] - positions[0][2]) / 4;
-        console.log("New tolerance: ", tolerance);
     });
 }
 
