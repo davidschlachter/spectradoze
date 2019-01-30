@@ -88,20 +88,22 @@ function startup() {
     setSavedPositions();
     
     // Support iOS
-    window.onload = function() {
-      if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
-        document.body.addEventListener('touchstart', function() {}, false);
-        resizeForIOS()
-      }
-    };
     if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
-        window.onresize = resizeForIOS();
+        document.body.addEventListener('touchstart', function() {}, false);
+        resizeForIOS();
     }
 }
 
 window.onload = startup;
-window.onresize = startup;
-window.onresize = resizeForIOS;
+if(/iP(hone|ad)/.test(window.navigator.userAgent)) {
+    resizeForIOS();
+    window.onresize = function () {
+        resizeForIOS();
+        startup;
+    };
+} else {
+    window.onresize = startup;
+}
 
 function resizeForIOS() {
     var height = document.documentElement.clientHeight;
