@@ -127,6 +127,7 @@ var bandcount = 32;
 
 function playAudio() {
     savePositions();
+    window.lastPosition = [-1, -1, -1, -1];
     
     if (window.audioCtx !== null) audioCtx.close();
     window.audioCtx = new AudioContext;
@@ -201,6 +202,8 @@ function getSpectrumData() {
 //
 // Sets height of bars as user drags across drawable
 //
+var prevTime, currTime, deltaTime;
+currTime = (new Date()).getTime();
 function setHeight(event) {
     var e = event;
     if (event && event.pageX) {e = event;} else {e = event.touches[0]}
@@ -230,6 +233,14 @@ function setHeight(event) {
             upper.setAttribute("style","height:"+ypercent+"%");
             var lower = document.querySelector("#"+frequencyBand.id+" > .down");
             lower.setAttribute("style","height:"+(100.0-ypercent)+"%");
+            // After a delay between touch/mouse-moves assume the next movement isn't a skip
+            // Necessary since mobile Safari doesn't trigger touch-end
+            prevTime = currTime;
+            currTime = (new Date()).getTime();
+            deltaTime = currTime - prevTime;
+            if (deltaTime > 1000) {
+                window.lastPosition = [-1, -1, -1, -1];
+            }
             // Detect bar skips: first two points
             if (window.lastPosition[0] === -1) {
                 window.lastPosition[0] = i;
