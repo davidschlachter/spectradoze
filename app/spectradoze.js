@@ -20,6 +20,7 @@ window.onload = startup; // Set up event handlers
 window.setHeightDelta = new Array();
 window.setHeightDelta[0] = 0;
 window.setHeightDelta[1] = 0;
+window.lastPosition = [-1, -1, -1, -1];
 
 // Initialize error tolerance (px) for drawing
 var tolerance = 0.0;
@@ -59,6 +60,7 @@ function startup() {
     addEvent(drawable, "mouseup", function() {
         removeEvent(drawable, "mousemove", setHeight);
         spectrum = getSpectrumData();
+        window.lastPosition = [-1, -1, -1, -1];
         playAudio();
         
     });
@@ -68,6 +70,7 @@ function startup() {
         var from = e.relatedTarget || e.toElement;
         if (!from || from.nodeName == "HTML") {
             removeEvent(drawable, "mousemove", setHeight);
+            window.lastPosition = [-1, -1, -1, -1];
             spectrum = getSpectrumData();
         }
     });
@@ -227,6 +230,37 @@ function setHeight(event) {
             upper.setAttribute("style","height:"+ypercent+"%");
             var lower = document.querySelector("#"+frequencyBand.id+" > .down");
             lower.setAttribute("style","height:"+(100.0-ypercent)+"%");
+            // Detect bar skips: first two points
+            if (window.lastPosition[0] === -1) {
+                window.lastPosition[0] = i;
+                window.lastPosition[1] = ypercent;
+                break;
+            }
+            if (window.lastPosition[2] === -1) {
+                window.lastPosition[2] = i;
+                window.lastPosition[3] = ypercent;
+                break;
+            }
+            // Detect bar skips: track changes
+            window.lastPosition[0] = window.lastPosition[2];
+            window.lastPosition[1] = window.lastPosition[3];
+            window.lastPosition[2] = i;
+            window.lastPosition[3] = ypercent;
+            // Detect bar skips: did we skip columns?
+            if (window.lastPosition[0] !== window.lastPosition[2]) { // changed columns
+                if (Math.abs(window.lastPosition[0] - window.lastPosition[2]) > 1) { // skipped columns
+                    var startIndex = Math.min(window.lastPosition[0], window.lastPosition[2]);
+                    var endIndex = Math.max(window.lastPosition[0], window.lastPosition[2]);
+                    for (var j = startIndex + 1; j < endIndex; j++) {
+                        var frequencyBand = document.getElementById(positions[j][0]);
+                        var upper = document.querySelector("#"+frequencyBand.id+" > .up");
+                        var newYPercent = window.lastPosition[1] + (j - window.lastPosition[0]) * ((window.lastPosition[1] - window.lastPosition[3])/(window.lastPosition[0] - window.lastPosition[2]));
+                        upper.setAttribute("style","height:"+newYPercent+"%");
+                        var lower = document.querySelector("#"+frequencyBand.id+" > .down");
+                        lower.setAttribute("style","height:"+(100.0-newYPercent)+"%");
+                    }
+                }
+            }
             break;
         }
     }
